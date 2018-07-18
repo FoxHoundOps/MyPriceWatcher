@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">My Price Watcher</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_label">Watched Prices</string>
+    <string name="item_name_label">Item Name:</string>
+    <string name="item_price_initial_label">Initial Price:</string>
+    <string name="item_date_added_label_header">(added:</string>
+    <string name="item_date_added_label_footer">)</string>
+    <string name="item_price_curr_label">Current Price:</string>
+    <string name="item_change_label">Change:</string>
+    <string name="refresh_button_label">Refresh</string>
+    <string name="null_label">NULL</string>
+</resources>
