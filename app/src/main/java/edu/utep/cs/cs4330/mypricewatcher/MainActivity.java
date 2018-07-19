@@ -3,6 +3,7 @@ package edu.utep.cs.cs4330.mypricewatcher;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,15 +29,14 @@ public class MainActivity extends AppCompatActivity {
     private Item currItem;                      /* Current item in view */
     private TextView itemName;                  /* Name of the current item */
     private TextView priceInit;                 /* Initial price of the current item */
-    private TextView dateAdded;                 /* Date the current item was added */
     private TextView priceCurr;                 /* Current price of the current item */
     private TextView percChange;                /* Percentage change of the item prices */
     private Button refreshButton;               /* Refresh button for the item in view */
     private Tracker tracker;                    /* Internal tracker for all items */
     /* Decimal formatter for percentages */
-    private static final DecimalFormat percFormatter = new DecimalFormat("+ ##.##%;- ##.##%");
+    private static final DecimalFormat percFormatter = new DecimalFormat("#0.##%;- #0.##%");
     /* Decimal formatter for dollar values */
-    private DecimalFormat dollarFormatter = new DecimalFormat("$##.##");
+    private DecimalFormat dollarFormatter = new DecimalFormat("$#,##0.00");
     /* Date formatter for displaying dates */
     private SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yy", java.util.Locale.US);
 
@@ -53,16 +53,14 @@ public class MainActivity extends AppCompatActivity {
             initTrackerForHw1();
 
             /* Initialize values for the current item */
-            itemName = findViewById(R.id.item_name_value);
-            itemName.setText(currItem.getName());
-            priceInit = findViewById(R.id.item_initial_price_value);
-            priceInit.setText(doubleToDollar(currItem.getInitPrice()));
-            dateAdded = findViewById(R.id.item_date_added);
-            dateAdded.setText(calToDate(currItem.getDateAdded()));
-            priceCurr = findViewById(R.id.item_current_price_value);
-            priceCurr.setText(doubleToDollar(currItem.getCurrPrice()));
-            percChange = findViewById(R.id.item_change_value);
-            percChange.setText(doubleToPerc(currItem.getPercChange()));
+            itemName = findViewById(R.id.item_name);
+            itemName.setText(Html.fromHtml(getString(R.string.item_name_template, currItem.getName())));
+            priceInit = findViewById(R.id.init_price);
+            priceInit.setText(Html.fromHtml(getString(R.string.init_price_template, doubleToDollar(currItem.getInitPrice()), calToDate(currItem.getDateAdded()))));
+            priceCurr = findViewById(R.id.curr_price);
+            priceCurr.setText(Html.fromHtml(getString(R.string.curr_price_template, doubleToDollar(currItem.getCurrPrice()))));
+            percChange = findViewById(R.id.perc_change);
+            percChange.setText(Html.fromHtml(getString(R.string.perc_change_template, doubleToPerc(currItem.getPercChange()))));
 
             // Initialize the refresh button and its handler
             refreshButton = findViewById(R.id.refresh_button);
@@ -105,16 +103,14 @@ public class MainActivity extends AppCompatActivity {
             );
 
             /* Initialize values for the current item */
-            itemName = findViewById(R.id.item_name_value);
-            itemName.setText(currItem.getName());
-            priceInit = findViewById(R.id.item_initial_price_value);
-            priceInit.setText(doubleToDollar(currItem.getInitPrice()));
-            dateAdded = findViewById(R.id.item_date_added);
-            dateAdded.setText(calToDate(currItem.getDateAdded()));
-            priceCurr = findViewById(R.id.item_current_price_value);
-            priceCurr.setText(doubleToDollar(currItem.getCurrPrice()));
-            percChange = findViewById(R.id.item_change_value);
-            percChange.setText(doubleToPerc(currItem.getPercChange()));
+            itemName = findViewById(R.id.item_name);
+            itemName.setText(Html.fromHtml(getString(R.string.item_name_template, currItem.getName())));
+            priceInit = findViewById(R.id.init_price);
+            priceInit.setText(Html.fromHtml(getString(R.string.init_price_template, doubleToDollar(currItem.getInitPrice()), calToDate(currItem.getDateAdded()))));
+            priceCurr = findViewById(R.id.curr_price);
+            priceCurr.setText(Html.fromHtml(getString(R.string.curr_price_template, doubleToDollar(currItem.getCurrPrice()))));
+            percChange = findViewById(R.id.perc_change);
+            percChange.setText(Html.fromHtml(getString(R.string.perc_change_template, doubleToPerc(currItem.getPercChange()))));
 
             // Initialize the refresh button and its handler
             refreshButton = findViewById(R.id.refresh_button);
@@ -141,8 +137,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void refreshItem(View v) {
         currItem.fetchCurrPrice();
-        priceCurr.setText(doubleToDollar(currItem.getCurrPrice()));
-        percChange.setText(doubleToPerc(currItem.getPercChange()));
+        updateValues();
     }
 
     /**
@@ -181,5 +176,10 @@ public class MainActivity extends AppCompatActivity {
     private void initTrackerForHw1() {
         tracker = Tracker.getInstance();
         currItem = tracker.addItem("www.amazon.com/Item0");
+    }
+
+    private void updateValues() {
+        priceCurr.setText(Html.fromHtml(getString(R.string.curr_price_template, doubleToDollar(currItem.getCurrPrice()))));
+        percChange.setText(Html.fromHtml(getString(R.string.perc_change_template, doubleToPerc(currItem.getPercChange()))));
     }
 }

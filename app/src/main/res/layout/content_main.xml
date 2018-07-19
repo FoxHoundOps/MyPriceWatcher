@@ -60,130 +60,25 @@
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintVertical_bias="0.051">
 
-        <TableRow
+        <TextView
+            android:id="@+id/item_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/item_name_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/item_name_label" />
-
-            <Space
-                android:layout_width="@dimen/horizontal_label_spacing"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/item_name_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/null_label" />
-
-        </TableRow>
-
-        <Space
+        <TextView
+            android:id="@+id/init_price"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/vertical_label_spacing" />
+            android:layout_height="wrap_content" />
 
-        <TableRow
+        <TextView
+            android:id="@+id/curr_price"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/item_initial_price_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/item_price_initial_label" />
-
-            <Space
-                android:layout_width="@dimen/horizontal_label_spacing"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/item_initial_price_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/null_label" />
-
-            <Space
-                android:layout_width="@dimen/horizontal_label_spacing"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/item_date_added_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/item_date_added_label_header" />
-
-            <Space
-                android:layout_width="@dimen/horizontal_label_spacing"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/item_date_added"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/null_label" />
-
-            <TextView
-                android:id="@+id/item_date_added_footer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/item_date_added_label_footer" />
-
-        </TableRow>
-
-        <Space
+        <TextView
+            android:id="@+id/perc_change"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/vertical_label_spacing" />
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/item_current_price_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/item_price_curr_label" />
-
-            <Space
-                android:layout_width="@dimen/horizontal_label_spacing"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/item_current_price_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/null_label" />
-        </TableRow>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/vertical_label_spacing" />
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/item_change_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/item_change_label" />
-
-            <Space
-                android:layout_width="@dimen/horizontal_label_spacing"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/item_change_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/null_label" />
-        </TableRow>
-
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
