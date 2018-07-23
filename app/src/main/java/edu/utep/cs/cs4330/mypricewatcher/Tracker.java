@@ -1,7 +1,8 @@
 package edu.utep.cs.cs4330.mypricewatcher;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import java.util.ArrayList;
-
 
 /**
  * Encapsulates Item objects in an internal data structure. The Tracker singleton
@@ -9,17 +10,17 @@ import java.util.ArrayList;
  * way for each Item to have its price updated.
  *
  * @author Damian Najera
- * @version 1.0
+ * @version 1.1
  */
-public class Tracker {
-    private ArrayList<Item> items;
+public class Tracker implements Parcelable{
+    private static ArrayList<Item> items;
     private static final Tracker instance = new Tracker();
 
     /**
      * The constructor for a Tracker object.
      */
     private Tracker() {
-        items = new ArrayList<>();
+        items = new Item("").getHW2items();
     }
 
     /**
@@ -37,14 +38,10 @@ public class Tracker {
     /**
      * Remove an Item object from the tracker's internal list of Item objects to track.
      *
-     * @param itemName The item name.
+     * @param item The item to remove
      */
-    public void removeItem(String itemName) {
-        for (Item i : items)
-            if (i.getName().equals(itemName)) {
-                items.remove(i);
-                break;
-            }
+    public void removeItem(Item item) {
+        items.remove(item);
     }
 
     /**
@@ -79,4 +76,31 @@ public class Tracker {
     public ArrayList<Item> getItems() {
         return items;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeTypedList(items);
+    }
+
+    private Tracker(Parcel in) {
+        items = in.createTypedArrayList(Item.CREATOR);
+    }
+
+    public static final Creator<Tracker> CREATOR = new Creator<Tracker>() {
+        @Override
+        public Tracker createFromParcel(Parcel in) {
+            return new Tracker(in);
+        }
+
+        @Override
+        public Tracker[] newArray(int size) {
+            return new Tracker[size];
+        }
+    };
 }
