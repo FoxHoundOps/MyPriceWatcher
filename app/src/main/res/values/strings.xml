@@ -7,4 +7,14 @@
     <string name="curr_price_template"><![CDATA[<b>Current Price:</b> %s]]></string>
     <string name="perc_change_template"><![CDATA[<b>Change:</b> %s]]></string>
     <string name="refresh_button_label">Refresh</string>
+    <string name="title_activity_item">ItemActivity</string>
+    <string name="items_list_title">Items</string>
+    <string name="item_name_label"><b>Item Name</b></string>
+    <string name="item_init_price_label"><b>Initial Price</b></string>
+    <string name="item_curr_price_label"><b>Current Price</b></string>
+    <string name="context_refresh_label">Refresh Price</string>
+    <string name="context_delete_label">Delete Item</string>
+    <string name="delete_dialog_prompt">Are you sure you want to delete this item?</string>
+    <string name="yes_dialog_button_label">YES</string>
+    <string name="no_dialog_button_label">@android:string/cancel</string>
 </resources>
