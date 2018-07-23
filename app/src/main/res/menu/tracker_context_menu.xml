@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/refresh_context"
+        android:title="@string/context_refresh_label"/>
+    <item
+        android:id="@+id/delete_context"
+        android:title="@string/context_delete_label"/>
+</menu>
