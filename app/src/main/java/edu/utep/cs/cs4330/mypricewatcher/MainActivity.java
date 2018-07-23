@@ -1,45 +1,80 @@
 package edu.utep.cs.cs4330.mypricewatcher;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.List;
 
-/**
- * The Main Activity of the app for HW1 purposes. This activity features
- * the viewing of one single item that will be tracked. This current implementation
- * features information such as the item's name, the initial price of the item, the
- * current price of the object (from when its price was last updated), the percentage
- * change from the initial price to the current price, the date that the item was
- * added to the Tracker, and a refresh button. When the refresh button is pressed,
- * the item currently in view will have its price updated.
- *
- * @author Damian Najera
- * @version 1.0
- */
-public class MainActivity extends AppCompatActivity {
-    private Item currItem;                      /* Current item in view */
-    private TextView itemName;                  /* Name of the current item */
-    private TextView priceInit;                 /* Initial price of the current item */
-    private TextView priceCurr;                 /* Current price of the current item */
-    private TextView percChange;                /* Percentage change of the item prices */
-    private Button refreshButton;               /* Refresh button for the item in view */
+
+public class MainActivity extends AppCompatActivity implements DeleteDialogListener{
     private Tracker tracker;                    /* Internal tracker for all items */
-    /* Decimal formatter for percentages */
-    private static final DecimalFormat percFormatter = new DecimalFormat("#0.##%;- #0.##%");
-    /* Decimal formatter for dollar values */
-    private DecimalFormat dollarFormatter = new DecimalFormat("$#,##0.00");
-    /* Date formatter for displaying dates */
-    private SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yy", java.util.Locale.US);
+    private ListView itemsList;
+    private ItemListAdapter itemsAdapter;
+    private Button refreshButton;
+    private int selectedPosition;
 
+    private class ItemListAdapter extends ArrayAdapter<Item> {
+        private final List<Item> items;
+
+        private ItemListAdapter(Context ctx, List<Item> items) {
+            super (ctx, android.R.layout.simple_list_item_1, items);
+            this.items = items;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+            View row = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false);
+            Item item = items.get(position);
+            TextView view = row.findViewById(R.id.item_name);
+            view.setText(item.getName());
+            view = row.findViewById(R.id.initial_price);
+            view.setText(item.getInitPrice());
+            view = row.findViewById(R.id.current_price);
+            view.setText(item.getCurrPrice());
+
+            row.setOnClickListener(view1 -> {
+                Intent i = new Intent("edu.utep.cs.cs4330.mypricewatcher.ITEM_ACTIVITY");
+                i.putExtra("item", item);
+                startActivityForResult(i, 69);
+            });
+            row.setLongClickable(true);
+            return row;
+
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            Item item = (Item) data.getParcelableExtra("item");
+            Log.d("onActivityResult", item.getName());
+            List<Item> items = tracker.getItems();
+            for (Item i : items) {
+                if (i.getName().equals(item.getName())) {
+                    int index = items.indexOf(i);
+                    items.set(index, item);
+                    runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                }
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,24 +83,38 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /* Initialize the tracker and add a simulated item */
-        if (savedInstanceState == null) {
-            initTrackerForHw1();
+        tracker = Tracker.getInstance();
+        itemsList = (ListView) findViewById(R.id.items_list);
 
-            /* Initialize values for the current item */
-            itemName = findViewById(R.id.item_name);
-            itemName.setText(Html.fromHtml(getString(R.string.item_name_template, currItem.getName())));
-            priceInit = findViewById(R.id.init_price);
-            priceInit.setText(Html.fromHtml(getString(R.string.init_price_template, doubleToDollar(currItem.getInitPrice()), calToDate(currItem.getDateAdded()))));
-            priceCurr = findViewById(R.id.curr_price);
-            priceCurr.setText(Html.fromHtml(getString(R.string.curr_price_template, doubleToDollar(currItem.getCurrPrice()))));
-            percChange = findViewById(R.id.perc_change);
-            percChange.setText(Html.fromHtml(getString(R.string.perc_change_template, doubleToPerc(currItem.getPercChange()))));
+        itemsList.addHeaderView(getLayoutInflater().inflate(R.layout.items_list_titles, itemsList, false));
+        itemsAdapter = new ItemListAdapter(this, tracker.getItems());
+        itemsList.setAdapter(itemsAdapter);
 
-            // Initialize the refresh button and its handler
-            refreshButton = findViewById(R.id.refresh_button);
-            refreshButton.setOnClickListener(this::refreshItem);
+        refreshButton = findViewById(R.id.refresh_button);
+        refreshButton.setOnClickListener((View v) -> {
+            tracker.updatePrices();
+            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+        });
+
+        registerForContextMenu(itemsList);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getMenuInflater().inflate(R.menu.tracker_context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        selectedPosition = info.position - 1;
+        if (item.getItemId() == R.id.refresh_context) {
+            tracker.getItems().get(selectedPosition).fetchCurrPrice();
+            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
         }
+        else if (item.getItemId() == R.id.delete_context)
+            new DeleteDialog().show(getSupportFragmentManager(), "DeleteDialog");
+        return true;
     }
 
     @Override
@@ -92,94 +141,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        tracker = savedInstanceState.getParcelable("tracker");
+        selectedPosition = savedInstanceState.getInt("selectedPosition");
+        itemsList = findViewById(R.id.items_list);
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null) {
-            this.currItem = new Item(savedInstanceState.getString("name"),
-                    savedInstanceState.getDouble("initPrice"),
-                    savedInstanceState.getDouble("currPrice"),
-                    savedInstanceState.getDouble("percChange"),
-                    savedInstanceState.getString("url"),
-                    (Calendar)savedInstanceState.getSerializable("dateAdded")
-            );
-
-            /* Initialize values for the current item */
-            itemName = findViewById(R.id.item_name);
-            itemName.setText(Html.fromHtml(getString(R.string.item_name_template, currItem.getName())));
-            priceInit = findViewById(R.id.init_price);
-            priceInit.setText(Html.fromHtml(getString(R.string.init_price_template, doubleToDollar(currItem.getInitPrice()), calToDate(currItem.getDateAdded()))));
-            priceCurr = findViewById(R.id.curr_price);
-            priceCurr.setText(Html.fromHtml(getString(R.string.curr_price_template, doubleToDollar(currItem.getCurrPrice()))));
-            percChange = findViewById(R.id.perc_change);
-            percChange.setText(Html.fromHtml(getString(R.string.perc_change_template, doubleToPerc(currItem.getPercChange()))));
-
-            // Initialize the refresh button and its handler
-            refreshButton = findViewById(R.id.refresh_button);
-            refreshButton.setOnClickListener(this::refreshItem);
-        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString("name", currItem.getName());
-        outState.putDouble("initPrice", currItem.getInitPrice());
-        outState.putDouble("currPrice", currItem.getCurrPrice());
-        outState.putDouble("percChange", currItem.getPercChange());
-        outState.putString("url", currItem.getURL());
-        outState.putSerializable("dateAdded", currItem.getDateAdded());
+        outState.putParcelable("tracker", tracker);
+        outState.putInt("selectedPosition", selectedPosition);
         super.onSaveInstanceState(outState);
     }
 
-    /**
-     *Refresh current item's price by having the item refresh its price, then update
-     * the current price in the interface.
-     *
-     * @param v The view associated with the onClick() event that called this function
-     */
-    private void refreshItem(View v) {
-        currItem.fetchCurrPrice();
-        updateValues();
-    }
-
-    /**
-     * Convert double into a string fomratted as a dollar value.
-     *
-     * @param d The value of type double that will be formatted into a dollar string representation
-     * @return  The dollar value string representation of the double value
-     */
-    private String doubleToDollar(double d) {
-        return dollarFormatter.format(d);
-    }
-
-    /**
-     * Covert double into a string formatted as a percentage value.
-     *
-     * @param d The value of type double that will be formatted into a percentage string representation.
-     * @return  The percentage string representation of the double value
-     */
-    private String doubleToPerc(double d) {
-        return percFormatter.format(d);
-    }
-
-    /**
-     * Convert Calendar instance into a string representation: MM/dd/yy.
-     *
-     * @param c The Calendar instance whose date will be return as a string representation
-     * @return  The string representation of the Calendar instance's date.
-     */
-    private String calToDate(Calendar c) {
-        return dateFormatter.format(c.getTime());
-    }
-
-    /**
-     * Initialize a tracker and add a fixed and simulated item for HW1 purposes.
-     */
-    private void initTrackerForHw1() {
-        tracker = Tracker.getInstance();
-        currItem = tracker.addItem("www.amazon.com/Item0");
-    }
-
-    private void updateValues() {
-        priceCurr.setText(Html.fromHtml(getString(R.string.curr_price_template, doubleToDollar(currItem.getCurrPrice()))));
-        percChange.setText(Html.fromHtml(getString(R.string.perc_change_template, doubleToPerc(currItem.getPercChange()))));
+    @Override
+    public void onResponse(DeleteDialog d, boolean proceed) {
+        if (proceed) {
+            tracker.removeItem(tracker.getItems().get(selectedPosition));
+            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+        }
+        else d.dismiss();
     }
 }
