@@ -22,7 +22,7 @@ import android.widget.TextView;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements DeleteDialogListener, AddItemDialogListener {
+public class MainActivity extends AppCompatActivity implements DeleteDialogListener, AddItemDialogListener, EditNameDialogListener, EditURLDialogListener {
     private Tracker tracker;                    /* Internal tracker for all items */
     private ListView itemsList;
     private ItemListAdapter itemsAdapter;
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
         tracker = Tracker.getInstance();
         itemsList = (ListView) findViewById(R.id.items_list);
 
-        itemsList.addHeaderView(getLayoutInflater().inflate(R.layout.items_list_titles, itemsList, false));
+        itemsList.addHeaderView(getLayoutInflater().inflate(R.layout.items_list_titles, itemsList, false), null, false);
         itemsAdapter = new ItemListAdapter(this, tracker.getItems());
         itemsList.setAdapter(itemsAdapter);
 
@@ -114,11 +114,24 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         selectedPosition = info.position - 1;
-        if (item.getItemId() == R.id.refresh_context) {
-            tracker.getItems().get(selectedPosition).fetchCurrPrice();
-            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
-        } else if (item.getItemId() == R.id.delete_context)
-            new DeleteDialog().show(getSupportFragmentManager(), "DeleteDialog");
+        switch (item.getItemId()) {
+            case (R.id.refresh_context):
+                tracker.getItems().get(selectedPosition).fetchCurrPrice();
+                runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                return true;
+
+            case (R.id.delete_context):
+                new DeleteDialog().show(getSupportFragmentManager(), "DeleteDialog");
+                return true;
+
+            case (R.id.edit_name_context):
+                new EditItemNameDialog().show(getSupportFragmentManager(), "EditNameDialog");
+                return true;
+
+            case (R.id.edit_url_context):
+                new EditURLDialog().show(getSupportFragmentManager(), "EditURLDialog");
+                return true;
+        }
         return true;
     }
 
@@ -198,6 +211,22 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onItemName(EditItemNameDialog d, boolean proceed, String newName) {
+        if (proceed) {
+            tracker.getItems().get(selectedPosition).setName(newName);
+            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+        } else d.dismiss();
+    }
+
+    @Override
+    public void onItemURL(EditURLDialog d, boolean proceed, String newURL) {
+        if (proceed) {
+            tracker.getItems().get(selectedPosition).setURL(newURL);
+            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+        } else d.dismiss();
     }
 }
 
