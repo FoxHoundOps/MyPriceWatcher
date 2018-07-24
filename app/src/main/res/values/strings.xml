@@ -6,6 +6,7 @@
     <string name="init_price_template"><![CDATA[<b>Initial Price:</b> %s <i>(added: %s)</i>]]></string>
     <string name="curr_price_template"><![CDATA[<b>Current Price:</b> %s]]></string>
     <string name="perc_change_template"><![CDATA[<b>Change:</b> %s]]></string>
+    <string name="url_template"><![CDATA[<b>URL:</b> <a href="%s"><b>Visit Site</b></a>]]></string>
     <string name="refresh_button_label">Refresh</string>
     <string name="title_activity_item">ItemActivity</string>
     <string name="items_list_title">Items</string>
@@ -17,4 +18,5 @@
     <string name="delete_dialog_prompt">Are you sure you want to delete this item?</string>
     <string name="yes_dialog_button_label">YES</string>
     <string name="no_dialog_button_label">@android:string/cancel</string>
+    <string name="add_item_prompt">Enter URL</string>
 </resources>

@@ -119,6 +119,13 @@ public class Item implements Parcelable{
     }
 
     /**
+     * Setter for Item's name.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * Getter for Item's initial price.
      *
      * @return The string representation of the Item's initial price
@@ -161,6 +168,13 @@ public class Item implements Parcelable{
      */
     public String getURL() {
         return url;
+    }
+
+    /**
+     * Setter for the Item's url.
+     */
+    public void setURL(String url) {
+        this.url = url;
     }
 
     /**

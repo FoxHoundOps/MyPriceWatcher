@@ -18,21 +18,21 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements DeleteDialogListener{
+public class MainActivity extends AppCompatActivity implements DeleteDialogListener, AddItemDialogListener {
     private Tracker tracker;                    /* Internal tracker for all items */
     private ListView itemsList;
     private ItemListAdapter itemsAdapter;
-    private Button refreshButton;
     private int selectedPosition;
 
     private class ItemListAdapter extends ArrayAdapter<Item> {
         private final List<Item> items;
 
         private ItemListAdapter(Context ctx, List<Item> items) {
-            super (ctx, android.R.layout.simple_list_item_1, items);
+            super(ctx, android.R.layout.simple_list_item_1, items);
             this.items = items;
         }
 
@@ -64,13 +64,25 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             Item item = (Item) data.getParcelableExtra("item");
-            Log.d("onActivityResult", item.getName());
             List<Item> items = tracker.getItems();
             for (Item i : items) {
                 if (i.getName().equals(item.getName())) {
                     int index = items.indexOf(i);
                     items.set(index, item);
                     runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                    return;
+                }
+            }
+        }
+
+        if (resultCode == 2) {
+            Item item = (Item) data.getParcelableExtra("itemToDelete");
+            List<Item> items = tracker.getItems();
+            for (Item i : items) {
+                if (i.getName().equals(item.getName())) {
+                    items.remove(i);
+                    runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                    return;
                 }
             }
         }
@@ -90,12 +102,6 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
         itemsAdapter = new ItemListAdapter(this, tracker.getItems());
         itemsList.setAdapter(itemsAdapter);
 
-        refreshButton = findViewById(R.id.refresh_button);
-        refreshButton.setOnClickListener((View v) -> {
-            tracker.updatePrices();
-            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
-        });
-
         registerForContextMenu(itemsList);
     }
 
@@ -111,8 +117,7 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
         if (item.getItemId() == R.id.refresh_context) {
             tracker.getItems().get(selectedPosition).fetchCurrPrice();
             runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
-        }
-        else if (item.getItemId() == R.id.delete_context)
+        } else if (item.getItemId() == R.id.delete_context)
             new DeleteDialog().show(getSupportFragmentManager(), "DeleteDialog");
         return true;
     }
@@ -121,6 +126,18 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem refreshItems = menu.add(0, 0, 0, "Refresh Items");
+        {
+            refreshItems.setIcon(R.drawable.ic_refresh_white_24dp);
+            refreshItems.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
+
+        MenuItem addItem = menu.add(0, 1, 1, "Add Item");
+        {
+            addItem.setIcon(R.drawable.ic_add_white_24dp);
+            addItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        }
         return true;
     }
 
@@ -136,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
             return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return getMenuChoice(item);
     }
 
     @Override
@@ -159,7 +176,28 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
         if (proceed) {
             tracker.removeItem(tracker.getItems().get(selectedPosition));
             runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+        } else d.dismiss();
+    }
+
+    @Override
+    public void onUserInput(AddItemDialog d, boolean proceed, String input) {
+        if (proceed) {
+            tracker.addItem(input);
+            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+        } else d.dismiss();
+    }
+
+    private boolean getMenuChoice(MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                tracker.updatePrices();
+                runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                return true;
+            case 1:
+                new AddItemDialog().show(getSupportFragmentManager(), "AddItemDialog");
+                return true;
         }
-        else d.dismiss();
+        return false;
     }
 }
+
