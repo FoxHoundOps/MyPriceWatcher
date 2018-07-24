@@ -23,9 +23,8 @@ public class DeleteDialog extends AppCompatDialogFragment {
      * to delete an item from their list. Initializes handling of the positive/negative buttons. If
      * the positive button is selected, communicate back through the listener with a boolean 'true'. If
      * the negative button is selected, communicate back through the listener with an boolean 'false'.
-     * .
-     * @param savedInstanceState The saved instance state from the activity that invoked the dialog
-     * @return  A DeleteDialog.
+     *
+     * {@inheritDoc}
      */
     @NonNull
     @Override
@@ -42,7 +41,7 @@ public class DeleteDialog extends AppCompatDialogFragment {
      * Attach the implemented DeleteDialogListener from the activity interested in the response from
      * the DeleteDialog dialog.
      *
-     * @param context The Context whose implemented DeleteDialogListener will be attached to the DeleteDialog dialog.
+     * {@inheritDoc}
      */
     @Override
     public void onAttach(Context context) {

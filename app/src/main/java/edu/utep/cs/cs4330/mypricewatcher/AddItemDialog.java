@@ -22,8 +22,7 @@ public class AddItemDialog extends AppCompatDialogFragment {
     /**
      * Create, build, and return the dialog.
      *
-     * @param savedInstanceState The saved instance state from the activity that invoked the dialog
-     * @return  A AddItemDialog
+     * {@inheritDoc}
      */
     @NonNull
     @Override
@@ -41,10 +40,10 @@ public class AddItemDialog extends AppCompatDialogFragment {
     }
 
     /**
-     * Attach the implemented AddItemDialogListener from the activity interested in the response from
-     * the AddItemDialog dialog.
+     * Override to attach the implemented AddItemDialogListener from the activity interested in
+     * the response from the AddItemDialog dialog.
      *
-     * @param context The Context whose implemented AddItemDialogListener will be attached to the AddItemDialog dialog
+     * {@inheritDoc}
      */
     @Override
     public void onAttach(Context context) {
@@ -59,7 +58,7 @@ public class AddItemDialog extends AppCompatDialogFragment {
     /**
      * Save the text entered in the EditText, so that it can be restored.
      *
-     * @param outState The Bundle to save the input
+     * {@inheritDoc}
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {

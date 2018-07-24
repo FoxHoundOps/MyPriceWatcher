@@ -62,7 +62,7 @@ public class Tracker implements Parcelable{
     /**
      * Returns the Tracker singleton object.
      *
-     * @return The Tracker singleton.
+     * @return The Tracker singleton
      */
     public static Tracker getInstance() {
         return instance;
@@ -89,8 +89,7 @@ public class Tracker implements Parcelable{
     /**
      * Implementation for writing an Tracker to a Parcel
      *
-     * @param parcel The Parcel object that will encapsulate the Tracker
-     * @param i      Flags
+     * {@inheritDoc}
      */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
@@ -110,11 +109,17 @@ public class Tracker implements Parcelable{
      * Creator used for reconstructing an Item from a Parcel object.
      */
     public static final Creator<Tracker> CREATOR = new Creator<Tracker>() {
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Tracker createFromParcel(Parcel in) {
             return new Tracker(in);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Tracker[] newArray(int size) {
             return new Tracker[size];

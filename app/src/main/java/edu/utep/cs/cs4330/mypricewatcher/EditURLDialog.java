@@ -12,9 +12,11 @@ public class EditURLDialog extends AppCompatDialogFragment {
     private EditURLDialogListener listener;      /* The internal listener for this EditURLDialog */
     private EditText input;                      /* Input field for item's new URL */
     /**
+     * A custom AlertDialog to display when a user tries to edit an item's URL from their list of items
+     *  that will be tracked. This dialog will allow a user to confirm whether or not they actually
+     *  want to proceed with editing an item's URL from their list.
      *
-     * @param savedInstanceState The saved instance state from the activity that invoked the dialog
-     * @return  A EditURLDialog..
+     * {@inheritDoc}
      */
     @NonNull
     @Override
@@ -35,7 +37,9 @@ public class EditURLDialog extends AppCompatDialogFragment {
      * Attach the implemented EditURLDialog from the activity interested in the response from
      * the EditURLDialog dialog.
      *
-     * @param context The Context whose implemented EditNameDialogListener will be attached to the EditURLDialog dialog.
+     * A custom AlertDialog to display when a user tries to edit an item name from their list of items
+     *  that will be tracked. This dialog will allow a user to confirm whether or not they actually
+     *  want to proceed with editing an item's name from their list.
      */
     @Override
     public void onAttach(Context context) {
@@ -50,7 +54,9 @@ public class EditURLDialog extends AppCompatDialogFragment {
     /**
      * Save the text entered in the EditText, so that it can be restored.
      *
-     * @param outState The Bundle to save the input
+     * A custom AlertDialog to display when a user tries to edit an item name from their list of items
+     *  that will be tracked. This dialog will allow a user to confirm whether or not they actually
+     *  want to proceed with editing an item's name from their list.
      */
     @Override
     public void onSaveInstanceState(Bundle outState) {

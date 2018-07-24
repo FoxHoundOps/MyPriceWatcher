@@ -19,7 +19,14 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
- * The Main Activity
+ * The Main Activity features the viewing and managing of a list of items whose prices will be
+ * tracked by this My Price Watcher app. Every item that a user wants to keep track of will be
+ * shown in this list. Each row in the list will show the item's name, initial price, and current
+ * price. Each row contains a context menu that allows a user to refresh an item's current price,
+ * edit the item's name or URL, and delete the item from the list. The menu bar for this Main
+ * Activity also has two addition items: 1) a refresh button that, when clicked, will refresh the
+ * current price for all the items in the list 2) an add button that, when clicked, will display
+ * an AddItemDialog, so that the item's url can be entered, and the item can be added to the list.
  *
  * @author Damian Najera
  * @version 1.2

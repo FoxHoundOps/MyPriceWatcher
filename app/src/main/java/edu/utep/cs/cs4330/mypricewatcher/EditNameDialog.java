@@ -23,8 +23,7 @@ public class EditNameDialog extends AppCompatDialogFragment {
     /**
      * Create, build, and return the dialog.
      *
-     * @param savedInstanceState The saved instance state from the activity that invoked the dialog
-     * @return  A EditNameDialog
+     * {@inheritDoc}
      */
     @NonNull
     @Override
@@ -45,7 +44,7 @@ public class EditNameDialog extends AppCompatDialogFragment {
      * Attach the implemented EditNameDialog from the activity interested in the response from
      * the EditNameDialog dialog.
      *
-     * @param context The Context whose implemented EditNameDialogListener will be attached to the EditNameDialog dialog.
+     * {@inheritDoc}
      */
     @Override
     public void onAttach(Context context) {

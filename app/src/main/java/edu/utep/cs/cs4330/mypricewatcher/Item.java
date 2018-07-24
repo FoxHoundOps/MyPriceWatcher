@@ -17,7 +17,7 @@ import java.util.Calendar;
  * item, and the a Calendar object related to when the object was created.
  *
  * @author Damian Najera
- * @version 1.1
+ * @version 1.2
  */
 public class Item implements Parcelable{
     private String name;                        /* Name of the item */
@@ -67,11 +67,17 @@ public class Item implements Parcelable{
      * Creator used for reconstructing an Item from a Parcel object.
      */
     public static final Creator<Item> CREATOR = new Creator<Item>() {
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Item createFromParcel(Parcel in) {
             return new Item(in);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Item[] newArray(int size) {
             return new Item[size];
@@ -88,10 +94,9 @@ public class Item implements Parcelable{
     }
 
     /**
-     * Implementation for writing an Item to a Parcel
+     * Implementation for writing an Item to a Parcel.
      *
-     * @param parcel The Parcel object that will encapsulate the Item
-     * @param i      Flags
+     * {@inheritDoc}
      */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
