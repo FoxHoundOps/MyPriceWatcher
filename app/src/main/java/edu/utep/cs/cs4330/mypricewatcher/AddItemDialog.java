@@ -8,13 +8,22 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.widget.EditText;
 
+/**
+ *  A custom AlertDialog to display when a user wants to add an item to their list of items
+ *  that will be tracked. This dialog will allow a user to confirm whether or not they actually
+ *  want to proceed with adding the item from their list.
+ *
+ * @author Damian Najera
+ * @version 1.0
+ */
 public class AddItemDialog extends AppCompatDialogFragment {
     private AddItemDialogListener listener;      /* The internal listener for this AddItemDialog */
 
     /**
+     * Create, build, and return the dialog.
      *
      * @param savedInstanceState The saved instance state from the activity that invoked the dialog
-     * @return  A AddItemDialog..
+     * @return  A AddItemDialog
      */
     @NonNull
     @Override
@@ -31,9 +40,9 @@ public class AddItemDialog extends AppCompatDialogFragment {
 
     /**
      * Attach the implemented AddItemDialogListener from the activity interested in the response from
-     * the DeleteDialog dialog.
+     * the AddItemDialog dialog.
      *
-     * @param context The Context whose implemented AddItemDialogListener will be attached to the AddItemDialog dialog.
+     * @param context The Context whose implemented AddItemDialogListener will be attached to the AddItemDialog dialog
      */
     @Override
     public void onAttach(Context context) {
