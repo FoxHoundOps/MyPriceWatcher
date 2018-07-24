@@ -50,7 +50,7 @@ public class Item implements Parcelable{
     }
 
     /**
-     * The constructor used when creating an Item for a Parcel object.
+     * The constructor used when creating an Item from a Parcel object.
      *
      * @param in The Parcel object encapsulating the Item object
      */
@@ -78,6 +78,10 @@ public class Item implements Parcelable{
         }
     };
 
+    /**
+     * This method is not used, and it not meant to be used.
+     * @return 0
+     */
     @Override
     public int describeContents() {
         return 0;
@@ -213,6 +217,16 @@ public class Item implements Parcelable{
         return percFormatter.format(d);
     }
 
+    /**
+     * Private constructor used for HW2, in order to create predefined items.
+     *
+     * @param name          The Item's name
+     * @param initPrice     The Item's initial price
+     * @param currPrice     The Item's current price
+     * @param percChange    The Item's percentage change from initial price to current price
+     * @param url           The Item's web URL
+     * @param dateAdded     The date the Item was created
+     */
     private Item(String name, double initPrice, double currPrice, double percChange, String url, String dateAdded) {
         this.name = name;
         this.initPrice = initPrice;
@@ -222,6 +236,11 @@ public class Item implements Parcelable{
         this.dateAdded = dateAdded;
     }
 
+    /**
+     * Method used to demonstrate My Price Watcher app for HW purposes.
+     *
+     * @return An ArrayList containing 3 Items
+     */
     public ArrayList<Item> getHW2items() {
         Item i0 = new Item("Avengers Marvel Legends Series Infinity Gauntlet Articulated Electronic Fist ",
                 49.99,

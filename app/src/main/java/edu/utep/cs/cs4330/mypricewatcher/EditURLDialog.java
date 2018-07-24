@@ -10,7 +10,7 @@ import android.widget.EditText;
 
 public class EditURLDialog extends AppCompatDialogFragment {
     private EditURLDialogListener listener;      /* The internal listener for this EditURLDialog */
-    private EditText input;
+    private EditText input;                      /* Input field for item's new URL */
     /**
      *
      * @param savedInstanceState The saved instance state from the activity that invoked the dialog
@@ -47,6 +47,11 @@ public class EditURLDialog extends AppCompatDialogFragment {
         }
     }
 
+    /**
+     * Save the text entered in the EditText, so that it can be restored.
+     *
+     * @param outState The Bundle to save the input
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("input", input.getText().toString());

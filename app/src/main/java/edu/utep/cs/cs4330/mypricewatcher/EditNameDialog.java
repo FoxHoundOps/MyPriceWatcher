@@ -8,14 +8,23 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.widget.EditText;
 
-public class EditItemNameDialog extends AppCompatDialogFragment {
+/**
+ *  A custom AlertDialog to display when a user tries to edit an item name from their list of items
+ *  that will be tracked. This dialog will allow a user to confirm whether or not they actually
+ *  want to proceed with editing an item's name from their list.
+ *
+ * @author Damian Najera
+ * @version 1.0
+ */
+public class EditNameDialog extends AppCompatDialogFragment {
     private EditNameDialogListener listener;      /* The internal listener for this EditNameDialog */
-    private EditText input;
+    private EditText input;                       /* Input field for item's new name */
 
     /**
+     * Create, build, and return the dialog.
      *
      * @param savedInstanceState The saved instance state from the activity that invoked the dialog
-     * @return  A EditNameDialog..
+     * @return  A EditNameDialog
      */
     @NonNull
     @Override
@@ -34,7 +43,7 @@ public class EditItemNameDialog extends AppCompatDialogFragment {
 
     /**
      * Attach the implemented EditNameDialog from the activity interested in the response from
-     * the EditItemName dialog.
+     * the EditNameDialog dialog.
      *
      * @param context The Context whose implemented EditNameDialogListener will be attached to the EditNameDialog dialog.
      */
@@ -48,6 +57,11 @@ public class EditItemNameDialog extends AppCompatDialogFragment {
         }
     }
 
+    /**
+     * Save the text entered in the EditText, so that it can be restored.
+     *
+     * @param outState The Bundle to save the input
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString("input", input.getText().toString());

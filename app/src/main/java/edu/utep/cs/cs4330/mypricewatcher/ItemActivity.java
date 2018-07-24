@@ -6,25 +6,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 
 /**
- * The Item Activity of the app for HW1 purposes. This activity features
- * the viewing of one single item that will be tracked. This current implementation
- * features information such as the item's name, the initial price of the item, the
- * current price of the object (from when its price was last updated), the percentage
- * change from the initial price to the current price, the date that the item was
- * added to the Tracker, and a refresh button. When the refresh button is pressed,
- * the item currently in view will have its price updated.
+ * The Item Activity features the viewing of one single item that is being tracked.
+ * This current implementation features information such as the item's name, the initial price
+ * of the item, the current price of the object (from when its price was last updated), the
+ * percentage change from the initial price to the current price, the date that the item was
+ * added to the Tracker, and a clickable "View Item" that, when clicked, will launch a web browser
+ * and direct it to the Item's URL. The Item Activity has toolbar that contains a refresh button,
+ * and a delete button. When the refresh button is pressed, the item currently in view will have its
+ * price updated. When the delete button is pressed, a dialog will appear asking to confirm deletion
+ * of the Item.
  *
  * @author Damian Najera
- * @version 1.0
+ * @version 1.2
  */
 public class ItemActivity extends AppCompatActivity implements DeleteDialogListener {
     private Item currItem;                      /* Current item in view */
@@ -36,7 +35,11 @@ public class ItemActivity extends AppCompatActivity implements DeleteDialogListe
     private Intent intentResult;                /* Intent that will hold any result for MainActivity */
     private boolean hasSetResult = false;       /* Whether a result has been set with setResult(int) */
 
-
+    /**
+     * Override to retrieve and initialize the fields to display for the current Item.
+     *
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +51,15 @@ public class ItemActivity extends AppCompatActivity implements DeleteDialogListe
         Intent i = getIntent();
         currItem = i.getParcelableExtra("item");
 
-        /* Initialize the tracker and add a simulated item */
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null)
            displayItem();
-        }
     }
 
+    /**
+     * Override to add refresh and delete items to the menu.
+     *
+     * {@inheritDoc}
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -74,6 +80,11 @@ public class ItemActivity extends AppCompatActivity implements DeleteDialogListe
         return true;
     }
 
+    /**
+     * Override to invoke getMenuChoice() and allow for handling.
+     *
+     * {@inheritDoc}
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -89,6 +100,11 @@ public class ItemActivity extends AppCompatActivity implements DeleteDialogListe
         return getMenuChoice(item);
     }
 
+    /**
+     * Override and restore intentResult, hasSetResult, and set result if it was set.
+     *
+     * {@inheritDoc}
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -99,6 +115,11 @@ public class ItemActivity extends AppCompatActivity implements DeleteDialogListe
         displayItem();
     }
 
+    /**
+     * Override and save intentResult and hasSetResult.
+     *
+     * {@inheritDoc}
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("intentResult", intentResult);
@@ -107,9 +128,8 @@ public class ItemActivity extends AppCompatActivity implements DeleteDialogListe
     }
 
     /**
-     *Refresh current item's price by having the item refresh its price, then update
+     * Refresh current item's price by having the item refresh its price, then update
      * the current price in the interface.
-     *
      */
     private void refreshItem() {
         currItem.fetchCurrPrice();
@@ -120,13 +140,18 @@ public class ItemActivity extends AppCompatActivity implements DeleteDialogListe
         hasSetResult = true;
     }
 
+    /**
+     * Update the current price of the item, and the percentage change.
+     */
     private void updateValues() {
         priceCurr.setText(Html.fromHtml(getString(R.string.curr_price_template, currItem.getCurrPrice())));
         percChange.setText(Html.fromHtml(getString(R.string.perc_change_template, currItem.getPercChange())));
     }
 
+    /**
+     * Initialize and set values for the current item.
+     */
     private void displayItem() {
-        /* Initialize values for the current item */
         itemName = findViewById(R.id.item_name);
         itemName.setText(Html.fromHtml(getString(R.string.item_name_template, currItem.getName())));
         priceInit = findViewById(R.id.init_price);
@@ -141,6 +166,12 @@ public class ItemActivity extends AppCompatActivity implements DeleteDialogListe
         url.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    /**
+     *  Given a MenuItem, determine and handle what item was selected.
+     *
+     * @param item The MenuItem instance
+     * @return     Boolean whether an item was successfully handled
+     */
     private boolean getMenuChoice(MenuItem item) {
         switch (item.getItemId()) {
             case 0:
@@ -153,6 +184,12 @@ public class ItemActivity extends AppCompatActivity implements DeleteDialogListe
         return false;
     }
 
+    /**
+     * Implement handling of onResponse() from DeleteDialogListener.
+     *
+     * @param d       The DeleteItemDialog instance that is returning a response
+     * @param proceed A boolean describing whether a user selected the positive or negative button
+     */
     @Override
     public void onResponse(DeleteDialog d, boolean proceed) {
         if (proceed) {

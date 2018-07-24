@@ -13,8 +13,8 @@ import java.util.ArrayList;
  * @version 1.1
  */
 public class Tracker implements Parcelable{
-    private static ArrayList<Item> items;
-    private static final Tracker instance = new Tracker();
+    private static ArrayList<Item> items;                   /* Tracker's internal list of Items */
+    private static final Tracker instance = new Tracker();  /* Tracker's singleton */
 
     /**
      * The constructor for a Tracker object.
@@ -77,21 +77,38 @@ public class Tracker implements Parcelable{
         return items;
     }
 
-
+    /**
+     * This method is not used, and it not meant to be used.
+     * @return 0
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Implementation for writing an Tracker to a Parcel
+     *
+     * @param parcel The Parcel object that will encapsulate the Tracker
+     * @param i      Flags
+     */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeTypedList(items);
     }
 
+    /**
+     * The constructor used when creating a Tracker from a Parcel object.
+     *
+     * @param in The Parcel object encapsulating the Item object
+     */
     private Tracker(Parcel in) {
         items = in.createTypedArrayList(Item.CREATOR);
     }
 
+    /**
+     * Creator used for reconstructing an Item from a Parcel object.
+     */
     public static final Creator<Tracker> CREATOR = new Creator<Tracker>() {
         @Override
         public Tracker createFromParcel(Parcel in) {

@@ -18,7 +18,7 @@ import android.widget.EditText;
  */
 public class AddItemDialog extends AppCompatDialogFragment {
     private AddItemDialogListener listener;      /* The internal listener for this AddItemDialog */
-
+    private EditText input;                      /* Input field for item's URL */
     /**
      * Create, build, and return the dialog.
      *
@@ -29,7 +29,9 @@ public class AddItemDialog extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        EditText input = new EditText(getContext());
+        input = new EditText(getContext());
+        if (savedInstanceState != null)
+            input.setText(savedInstanceState.getString("input"));
         builder.setMessage(R.string.add_item_prompt)
                 .setView(input)
                 .setPositiveButton(R.string.yes_dialog_button_label, (dialogInterface, i) -> listener.onUserInput(this, true, input.getText().toString()))
@@ -52,5 +54,16 @@ public class AddItemDialog extends AppCompatDialogFragment {
         } catch(ClassCastException e) {
             throw new ClassCastException(context.toString() + "Need to implement AddItemDialogListener.");
         }
+    }
+
+    /**
+     * Save the text entered in the EditText, so that it can be restored.
+     *
+     * @param outState The Bundle to save the input
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("input", input.getText().toString());
+        super.onSaveInstanceState(outState);
     }
 }
