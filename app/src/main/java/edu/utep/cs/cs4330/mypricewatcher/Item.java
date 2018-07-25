@@ -14,7 +14,7 @@ import java.util.Calendar;
  * is created, the current price (which will be updated and fetched by
  * the PriceFinder object, the percentage change (which will be updated
  * when the current price is updated, the web URL associated with the
- * item, and the a Calendar object related to when the object was created.
+ * item, and the a String representation of the date when the object was created.
  *
  * @author Damian Najera
  * @version 1.2
