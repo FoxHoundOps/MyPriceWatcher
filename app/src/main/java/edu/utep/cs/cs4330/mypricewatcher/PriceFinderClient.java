@@ -8,6 +8,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ *  A subclass of PriceFinder that overrides fetchPrice(). This PriceFinder subclass will actually
+ *  act as a client to a Web service that, given a Web URL, returns the price of the item found
+ *  at the specified Web URL.
+ *
+ * @author Damian Najera
+ * @version 1.0
+ */
 public class PriceFinderClient  extends PriceFinder{
     private final String USER = "dgnajera";
     private final String PIN = "cs.utep.edu";
@@ -15,6 +23,13 @@ public class PriceFinderClient  extends PriceFinder{
     private final int RESPONSE_OK = 200;
     private String response;
 
+    /**
+     * Override in order to actually query a Web service for the item price information.
+     *
+     * @param url                       The Web url containing an item
+     * @return                          The price of the item at 'url'
+     * @throws PriceNotFoundException   Throw in case price is not found
+     */
     @Override
     public double fetchPrice(String url) throws PriceNotFoundException{
         try {
