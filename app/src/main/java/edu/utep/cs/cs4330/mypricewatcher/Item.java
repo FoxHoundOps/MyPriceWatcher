@@ -17,31 +17,32 @@ import java.util.Calendar;
  * item, and the a String representation of the date when the object was created.
  *
  * @author Damian Najera
- * @version 1.2
+ * @version 1.3
  */
-public class Item implements Parcelable{
+public class Item implements Parcelable {
     private String name;                        /* Name of the item */
     private double initPrice;                   /* Initial price of the item */
     private double currPrice;                   /* Current (last fetched) priced of the item */
     private double percChange;                  /* Percentage change from initial to current price */
     private String url;                         /* The Web URL of the item */
     private String dateAdded;                   /* String representation of the date the Item was created */
-    private static final PriceFinder priceFinder = PriceFinder.getInstance();
+    private static final PriceFinder priceFinder = new PriceFinderClient();
 
     /* Date formatter for displaying dates */
-    private SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yy", java.util.Locale.US);
+    private static SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yy", java.util.Locale.US);
     /* Decimal formatter for percentages */
     private static final DecimalFormat percFormatter = new DecimalFormat("#0.##%;- #0.##%");
     /* Decimal formatter for dollar values */
-    private DecimalFormat dollarFormatter = new DecimalFormat("$#,##0.00");
+    private static final DecimalFormat dollarFormatter = new DecimalFormat("$#,##0.00");
 
     /**
      * The default constructor for an Item object.
      *
+     * @param name The name of the item
      * @param url The string representation of the Web url containing the item to be encapsulated
      */
-    public Item(String url) {
-        name = priceFinder.fetchName(url);
+    public Item(String name, String url) {
+        this.name = name;
         initPrice = priceFinder.fetchPrice(url);
         currPrice = initPrice;
         percChange = 0.0;
@@ -114,7 +115,7 @@ public class Item implements Parcelable{
      * @param c The Calendar instance whose date will be return as a string representation
      * @return  The string representation of the Calendar instance's date.
      */
-    private String calToDate(Calendar c) {
+    private static String calToDate(Calendar c) {
         return dateFormatter.format(c.getTime());
     }
 
@@ -208,7 +209,7 @@ public class Item implements Parcelable{
      * @param d The value of type double that will be formatted into a dollar string representation
      * @return  The dollar value string representation of the double value
      */
-    private String doubleToDollar(double d) {
+    private static String doubleToDollar(double d) {
         return dollarFormatter.format(d);
     }
 
@@ -218,7 +219,7 @@ public class Item implements Parcelable{
      * @param d The value of type double that will be formatted into a percentage string representation.
      * @return  The percentage string representation of the double value
      */
-    private String doubleToPerc(double d) {
+    private static String doubleToPerc(double d) {
         return percFormatter.format(d);
     }
 
@@ -246,12 +247,12 @@ public class Item implements Parcelable{
      *
      * @return An ArrayList containing 3 Items
      */
-    public ArrayList<Item> getHW2items() {
-        Item i0 = new Item("Avengers Marvel Legends Series Infinity Gauntlet Articulated Electronic Fist ",
+    public static ArrayList<Item> getHW2items() {
+        Item i0 = new Item("Nintendo Switch",
                 49.99,
                 49.99,
                 0.0,
-                "https://www.amazon.com/Avengers-Infinity-Gauntlet-Articulated-Electronic/dp/B071WT4KLM/ref=sr_1_1?ie=UTF8&qid=1532192445&sr=8-1&keywords=infinity+gauntlet",
+                "https://www.amazon.com/Nintendo-Switch-Neon-Blue-Red-Joy/dp/B01MUAGZ49?pd_rd_wg=zWezs&pd_rd_r=5d891ea2-7e13-4ae2-9191-092ec5165cd7&pd_rd_w=MXjJt&ref_=pd_gw_simh&pf_rd_r=ASV2VBE4NQ688YQR1E8D&pf_rd_p=a670abbe-a1ba-52d3-b360-3badcefeb448",
                 calToDate(Calendar.getInstance()));
 
         Item i1 = new Item("Nintendo Switch Pro Controller",
@@ -261,11 +262,11 @@ public class Item implements Parcelable{
                 "https://www.amazon.com/Nintendo-Switch-Pro-Controller/dp/B01NAWKYZ0/ref=sr_1_3?ie=UTF8&qid=1532192674&sr=8-3&keywords=nintendo%2Bswitch%2Bpro&th=1",
                 calToDate(Calendar.getInstance()));
 
-        Item i2 = new Item("Goodie Two Sleeves Men's Humor Cat Rides Llamacorn Adult T-Shirt ",
+        Item i2 = new Item("Super Mario Odyssey",
                 19.99,
                 19.99,
                 0.0,
-                "https://www.amazon.com/Goodie-Two-Sleeves-Llamacorn-Sublimated/dp/B01N951XG1/ref=sr_1_12?s=apparel&ie=UTF8&qid=1532192870&sr=1-12&nodeID=7141123011&psd=1&keywords=cat+shirt",
+                "https://www.amazon.com/Super-Mario-Odyssey-Nintendo-Switch/dp/B01MY7GHKJ/ref=pd_sim_63_4?_encoding=UTF8&pd_rd_i=B01MY7GHKJ&pd_rd_r=66745a32-915c-11e8-8894-7b6c558f7022&pd_rd_w=TcFIY&pd_rd_wg=G4vbF&pf_rd_i=desktop-dp-sims&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=a180fdfb-b54e-4904-85ba-d852197d6c09&pf_rd_r=RYTHNZKSAMW29HEJY1KE&pf_rd_s=desktop-dp-sims&pf_rd_t=40701&psc=1&refRID=RYTHNZKSAMW29HEJY1KE",
                 calToDate(Calendar.getInstance()));
 
         ArrayList<Item> items = new ArrayList<>();
