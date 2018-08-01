@@ -2,7 +2,6 @@ package edu.utep.cs.cs4330.mypricewatcher;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
