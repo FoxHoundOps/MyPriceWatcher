@@ -19,6 +19,7 @@ import java.util.Calendar;
  * @version 1.3
  */
 public class Item implements Parcelable {
+    private int _id;                            /* Database ID of the item */
     private String name;                        /* Name of the item */
     private double initPrice;                   /* Initial price of the item */
     private double currPrice;                   /* Current (last fetched) priced of the item */
@@ -223,7 +224,7 @@ public class Item implements Parcelable {
     }
 
     /**
-     * Private constructor used for HW2, in order to create predefined items.
+     * Constructor for rebuilding items.
      *
      * @param name          The Item's name
      * @param initPrice     The Item's initial price
@@ -232,46 +233,12 @@ public class Item implements Parcelable {
      * @param url           The Item's web URL
      * @param dateAdded     The date the Item was created
      */
-    private Item(String name, double initPrice, double currPrice, double percChange, String url, String dateAdded) {
+    public Item(String name, double initPrice, double currPrice, double percChange, String url, String dateAdded) {
         this.name = name;
         this.initPrice = initPrice;
         this.currPrice = currPrice;
         this.percChange = percChange;
         this.url = url;
         this.dateAdded = dateAdded;
-    }
-
-    /**
-     * Method used to demonstrate My Price Watcher app for HW purposes.
-     *
-     * @return An ArrayList containing 3 Items
-     */
-    public static ArrayList<Item> getHW2items() {
-        Item i0 = new Item("Nintendo Switch",
-                49.99,
-                49.99,
-                0.0,
-                "https://www.amazon.com/Nintendo-Switch-Neon-Blue-Red-Joy/dp/B01MUAGZ49?pd_rd_wg=zWezs&pd_rd_r=5d891ea2-7e13-4ae2-9191-092ec5165cd7&pd_rd_w=MXjJt&ref_=pd_gw_simh&pf_rd_r=ASV2VBE4NQ688YQR1E8D&pf_rd_p=a670abbe-a1ba-52d3-b360-3badcefeb448",
-                calToDate(Calendar.getInstance()));
-
-        Item i1 = new Item("Nintendo Switch Pro Controller",
-                69.99,
-                69.99,
-                0.0,
-                "https://www.amazon.com/Nintendo-Switch-Pro-Controller/dp/B01NAWKYZ0/ref=sr_1_3?ie=UTF8&qid=1532192674&sr=8-3&keywords=nintendo%2Bswitch%2Bpro&th=1",
-                calToDate(Calendar.getInstance()));
-
-        Item i2 = new Item("Super Mario Odyssey",
-                19.99,
-                19.99,
-                0.0,
-                "https://www.amazon.com/Super-Mario-Odyssey-Nintendo-Switch/dp/B01MY7GHKJ/ref=pd_sim_63_4?_encoding=UTF8&pd_rd_i=B01MY7GHKJ&pd_rd_r=66745a32-915c-11e8-8894-7b6c558f7022&pd_rd_w=TcFIY&pd_rd_wg=G4vbF&pf_rd_i=desktop-dp-sims&pf_rd_m=ATVPDKIKX0DER&pf_rd_p=a180fdfb-b54e-4904-85ba-d852197d6c09&pf_rd_r=RYTHNZKSAMW29HEJY1KE&pf_rd_s=desktop-dp-sims&pf_rd_t=40701&psc=1&refRID=RYTHNZKSAMW29HEJY1KE",
-                calToDate(Calendar.getInstance()));
-
-        ArrayList<Item> items = new ArrayList<>();
-        items.add(i0);
-        items.add(i1);
-        items.add(i2);
-        return items;
     }
 }
