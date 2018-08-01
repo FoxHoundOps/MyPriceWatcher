@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.util.List;
 
 /**
@@ -31,8 +32,7 @@ import java.util.List;
  * @author Damian Najera
  * @version 1.2
  */
-public class MainActivity extends AppCompatActivity implements DeleteDialogListener,
-        AddItemDialogListener, EditNameDialogListener, EditURLDialogListener {
+public class MainActivity extends AppCompatActivity implements DeleteDialogListener, ManageItemDialogListener {
     private Tracker tracker;                    /* Internal tracker for all items */
     private ItemListAdapter itemsAdapter;       /* The adapter for the ListView */
     private int selectedPosition;               /* Selected context menu option position */
@@ -162,20 +162,23 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
         selectedPosition = info.position - 1;
         switch (item.getItemId()) {
             case (R.id.refresh_context):
-                tracker.getItems().get(selectedPosition).fetchCurrPrice();
-                runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
-                return true;
-
+                try {
+                    new Thread(() -> {
+                        tracker.getItems().get(selectedPosition).fetchCurrPrice();
+                        runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                    }).start();
+                    Toast.makeText(this, "Refreshing Price...", Toast.LENGTH_LONG).show();
+                    return true;
+                }
+                catch(PriceNotFoundException e) {
+                    Toast.makeText(this, "Error getting price", Toast.LENGTH_LONG).show();
+                }
             case (R.id.delete_context):
                 new DeleteDialog().show(getSupportFragmentManager(), "DeleteDialog");
                 return true;
 
-            case (R.id.edit_name_context):
-                new EditNameDialog().show(getSupportFragmentManager(), "EditNameDialog");
-                return true;
-
-            case (R.id.edit_url_context):
-                new EditURLDialog().show(getSupportFragmentManager(), "EditURLDialog");
+            case (R.id.edit_item_context):
+                ManageItemDialog.newInstance(tracker.getItems().get(selectedPosition)).show(getSupportFragmentManager(), "");
                 return true;
         }
         return true;
@@ -264,21 +267,6 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
     }
 
     /**
-     * Implement handling of onUserInput() from AddItemDialogListener.
-     *
-     * @param d       The AddItemDialog instance that is returning a response
-     * @param proceed A boolean describing whether a user selected the positive or negative button
-     * @param input   The string input that was entered by the user, if any
-     */
-    @Override
-    public void onUserInput(AddItemDialog d, boolean proceed, String input) {
-        if (proceed) {
-            tracker.addItem(input);
-            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
-        } else d.dismiss();
-    }
-
-    /**
      *  Given a MenuItem, determine and handle what item was selected.
      *
      * @param item The MenuItem instance
@@ -287,43 +275,50 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
     private boolean getMenuChoice(MenuItem item) {
         switch (item.getItemId()) {
             case 0:
-                tracker.updatePrices();
-                runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                for (Item i : tracker.getItems()) {
+                    new Thread(() -> {
+                        try {
+                            i.fetchCurrPrice();
+                            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                            runOnUiThread(() -> Toast.makeText(this, "Updated price for: " + i.getName(), Toast.LENGTH_LONG).show());
+                        }
+                        catch(PriceNotFoundException e) {
+                            runOnUiThread(() -> Toast.makeText(this, "An error occurred getting the price for: " + i.getName(), Toast.LENGTH_LONG).show());
+                        }
+                    }).start();
+                }
                 return true;
             case 1:
-                new AddItemDialog().show(getSupportFragmentManager(), "AddItemDialog");
+                ManageItemDialog.newInstance().show(getSupportFragmentManager(), "");
                 return true;
         }
         return false;
     }
 
-    /**
-     * Implement handling of onItemName() from EditNameDialogListener.
-     *
-     * @param d       The EditNameDialog instance that is returning a response
-     * @param proceed A boolean describing whether a user selected the positive or negative button
-     * @param newName  The new name of the item
-     */
     @Override
-    public void onItemName(EditNameDialog d, boolean proceed, String newName) {
+    public void onItemManaged(ManageItemDialog d, String itemName, String url, boolean proceed, boolean newItem) {
         if (proceed) {
-            tracker.getItems().get(selectedPosition).setName(newName);
-            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
-        } else d.dismiss();
-    }
+            if (newItem) {
 
-    /**
-     * Implement handling of onItemURL() from EditURLDialogListener.
-     *
-     * @param d       The EditURLDialog instance that is returning a response
-     * @param proceed A boolean describing whether a user selected the positive or negative button
-     * @param newURL  The new URL of the item
-     */
-    @Override
-    public void onItemURL(EditURLDialog d, boolean proceed, String newURL) {
-        if (proceed) {
-            tracker.getItems().get(selectedPosition).setURL(newURL);
-            runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                new Thread(() -> {
+                    try {
+                        runOnUiThread(() -> Toast.makeText(this, "Adding item at: " + url, Toast.LENGTH_LONG).show());
+                        tracker.addItem(itemName, url);
+                        runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                        runOnUiThread(() -> Toast.makeText(this, "Added item!", Toast.LENGTH_LONG).show());
+                    }
+                    catch(PriceNotFoundException e) {
+                        runOnUiThread(() -> Toast.makeText(this, "Error with URL: " + url, Toast.LENGTH_LONG).show());
+                    }
+                }).start();
+                Toast.makeText(this, "Adding: " + itemName, Toast.LENGTH_LONG).show();
+            }
+            if (!newItem) {
+                tracker.getItems().get(selectedPosition).setName(itemName);
+                tracker.getItems().get(selectedPosition).setURL(url);
+                runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
+                Toast.makeText(this, "Item saved!", Toast.LENGTH_LONG).show();
+            }
         } else d.dismiss();
     }
 }
