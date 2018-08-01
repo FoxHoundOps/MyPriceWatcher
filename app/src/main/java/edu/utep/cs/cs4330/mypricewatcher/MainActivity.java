@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
     private Tracker tracker;                    /* Internal tracker for all items */
     private ItemListAdapter itemsAdapter;       /* The adapter for the ListView */
     private int selectedPosition;               /* Selected context menu option position */
+    private DBHandler dbHandler;                /* DB handler for storing tracked items */
 
     /**
      * Private class for a custom ArrayAdapter: ItemListAdapter. This custom adapter defines
@@ -137,6 +139,9 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
         itemsList.setAdapter(itemsAdapter);
 
         registerForContextMenu(itemsList);
+
+        dbHandler = new DBHandler(this, null, null, 1);
+        initTracker(dbHandler);
     }
 
     /**
@@ -261,7 +266,9 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
     @Override
     public void onResponse(DeleteDialog d, boolean proceed) {
         if (proceed) {
-            tracker.removeItem(tracker.getItems().get(selectedPosition));
+            Item item = tracker.getItems().get(selectedPosition);
+            tracker.removeItem(item);
+            dbHandler.deleteItem(item);
             runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
         } else d.dismiss();
     }
@@ -312,7 +319,8 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
                 new Thread(() -> {
                     try {
                         runOnUiThread(() -> Toast.makeText(this, "Adding item at: " + url, Toast.LENGTH_LONG).show());
-                        tracker.addItem(itemName, url);
+                        Item item = tracker.addItem(itemName, url);
+                        dbHandler.addItem(item);
                         runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
                         runOnUiThread(() -> Toast.makeText(this, "Added item!", Toast.LENGTH_LONG).show());
                     }
@@ -323,12 +331,20 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
                 Toast.makeText(this, "Adding: " + itemName, Toast.LENGTH_LONG).show();
             }
             if (!newItem) {
-                tracker.getItems().get(selectedPosition).setName(itemName);
-                tracker.getItems().get(selectedPosition).setURL(url);
+                Item itemToModify = tracker.getItems().get(selectedPosition);
+                dbHandler.editItem(itemToModify, itemName, url);
+                itemToModify.setName(itemName);
+                itemToModify.setURL(url);
                 runOnUiThread(() -> itemsAdapter.notifyDataSetChanged());
                 Toast.makeText(this, "Item saved!", Toast.LENGTH_LONG).show();
             }
         } else d.dismiss();
+    }
+
+    private void initTracker(DBHandler dbHandler) {
+        ArrayList<Item> storedItems = dbHandler.getItems();
+        for (Item i : storedItems)
+            tracker.addItem(i);
     }
 }
 
