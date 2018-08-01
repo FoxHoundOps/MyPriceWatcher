@@ -295,6 +295,15 @@ public class MainActivity extends AppCompatActivity implements DeleteDialogListe
         return false;
     }
 
+    /**
+     * Override onItemManaged from the ManageItemDialogListener in order to respond accordingly.
+     *
+     * @param d             The ManageItemDialog instance that is returning a response
+     * @param itemName      The item name that was entered
+     * @param url           The Web url that was entered
+     * @param proceed       Boolean, whether or not positive or negative button was pressed
+     * @param newItem       Boolean, whether the item is a new item or not
+     */
     @Override
     public void onItemManaged(ManageItemDialog d, String itemName, String url, boolean proceed, boolean newItem) {
         if (proceed) {
