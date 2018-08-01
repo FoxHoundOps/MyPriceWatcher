@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * way for each Item to have its price updated.
  *
  * @author Damian Najera
- * @version 1.1
+ * @version 1.3
  */
 public class Tracker implements Parcelable{
     private static ArrayList<Item> items;                   /* Tracker's internal list of Items */
@@ -20,7 +20,7 @@ public class Tracker implements Parcelable{
      * The constructor for a Tracker object.
      */
     private Tracker() {
-        items = new Item("").getHW2items();
+        items = Item.getHW2items();
     }
 
     /**
@@ -29,8 +29,8 @@ public class Tracker implements Parcelable{
      * @param url The string representation of the Web url containing the item to be tracked
      * @return The Item object encapsulating the item added to the tracker.
      */
-    public Item addItem(String url) {
-        Item i = new Item(url);
+    public Item addItem(String name, String url) {
+        Item i = new Item(name, url);
         items.add(i);
         return i;
     }
