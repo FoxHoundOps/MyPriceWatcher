@@ -20,7 +20,7 @@ public class Tracker implements Parcelable{
      * The constructor for a Tracker object.
      */
     private Tracker() {
-        items = Item.getHW2items();
+        items = new ArrayList<Item>();
     }
 
     /**
@@ -31,6 +31,17 @@ public class Tracker implements Parcelable{
      */
     public Item addItem(String name, String url) {
         Item i = new Item(name, url);
+        items.add(i);
+        return i;
+    }
+
+    /**
+     * Add an Item object into the tracker's internal list of Item objects to track.
+     *
+     * @param i An Item object to be added
+     * @return The Item object encapsulating the item added to the tracker.
+     */
+    public Item addItem(Item i) {
         items.add(i);
         return i;
     }
